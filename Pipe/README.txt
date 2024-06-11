@@ -1,0 +1,1 @@
+Pipe construction, passing one value.
