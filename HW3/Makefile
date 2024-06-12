@@ -45,4 +45,4 @@ $(C_OBJS): ${C_HEADERS}
 clean: 
 	rm -f *.o *- $(EXE1) $(EXE2)
 package: 
-	zip -r Henry-Lewis-HW2.zip coordinator.c coordinator.h checker.c Makefile README.txt
+	zip -r Henry-Lewis-HW3.zip coordinator.c coordinator.h checker.c Makefile README.txt

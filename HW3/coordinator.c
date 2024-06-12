@@ -17,39 +17,81 @@ void coordinator(int divisor, int div0, int div1, int div2, int div3) {
     //function to turn divisor into char string and then flip it to the correct order
     createString(divisor, divisorStr);
     reverseString(divisorStr);
+
+    int pids[4];
+    int sharedMemoryIds[4];
+    int fd[4][2];
     
     for (int j = 0; j < 4; j++) {
         //function to turn dividend into char string and then flip it to the correct order
         createString(dividendStrings[j], dividendStr);
         reverseString(dividendStr);
 
-        //Create a unique shared memory segment for each Checker instance to store results
-        int sharedMemoryId = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | 0666); //Create shared memory ID
-
         //create a pipe for each Checker instance
-        int fd[2];
-        pipe(fd);
+        pipe(fd[j]);
 
         //create a fork for each iteration through the loop
-        pid_t pid = fork();
+        pid_t pid = fork();        
 
-        if (pid == 0) { //check if daughter
-            printf("Coordinator: forked process with ID %d.\n", getpid());
+        //parent write to pipe
+        if (pid > 0 ) {
+            pids[j] = pid;
+            close(fd[j][0]);
+            printf("Coordinator: forked process with ID %d.\n", pids[j]);
             fflush(stdout);
-            printf("Coordinator: waiting for process [%d].\n", getpid());
+
+            //Create a unique shared memory segment for each Checker instance to store results
+            int sharedMemoryId = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | 0666);
+            sharedMemoryIds[j] = sharedMemoryId;
+            
+            //write to pipe
+            write(fd[j][1], &sharedMemoryId, sizeof(sharedMemoryId));
+            
+            //text output
+            int *sharedMemoryPointer = (int*)shmat(sharedMemoryId, NULL, 0);
+            printf("Coordinator: wrote shm ID %d to pipe (%ld bytes)\n", sharedMemoryId, sizeof(*sharedMemoryPointer));
             fflush(stdout);
-            execlp("./checker", "checker", divisorStr, dividendStr, NULL);
+            
+            close(fd[j][1]);
         }
-        if (pid > 0) { //check if parent and wait for daughter to finish completely.
-            int status;
-            wait(&status);
-            int result = WEXITSTATUS(status);
+        //child
+        if (pid == 0) {
+            //close write-pipe
+            close(fd[j][1]);
 
-            //cannot access getpid() for daughter so had to add j+1 to keep correct pid value...
-            printf("Coordinator: child process %d returned %d.\n", getpid()+j+1, result);
-            fflush(stdout);
+            //create buffer to pass to Child.c
+            char buffer[20];
+            sprintf(buffer, "%d", fd[j][0]);
+
+            //run Child.c and replace executable image
+            execlp("./checker", "checker", divisorStr, dividendStr, buffer, NULL);
         }
     }
+
+    for (int k = 0; k < 4; k++) {
+        //wait for child process to finish
+        int status;
+        printf("Coordinator: waiting on child process ID %d...\n", pids[k]);
+        fflush(stdout);
+        waitpid(pids[k], &status, 0);
+        WIFEXITED(status);
+        
+        //determine if child returned 0 or 1
+        int *sharedMemoryPointer = (int*)shmat(sharedMemoryIds[k], NULL, 0);
+        if (*sharedMemoryPointer == 1) {
+            printf("Coordinator: result 1 (divisible) read from shared memory.\n");
+            fflush(stdout);
+        }
+        else {
+            printf("Coordinator: result 0 (not divisible) read from shared memory.\n");
+            fflush(stdout);
+        }
+        
+        //destroy shared memory segment
+        shmctl(*sharedMemoryPointer, IPC_RMID, NULL);
+
+    }
+
     printf("Coordinator: exiting.\n");
 }
 
