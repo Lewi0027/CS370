@@ -2,12 +2,13 @@ package HW4;
 
 public class Main {
     
+    public static final int iterations = 1000000;
     public static void main(String[] args) {
 
         //Create a buffer item along with a producer and consumer instantiation
         Buffer buffer = new Buffer(1000);
-        Producer producer = new Producer(buffer);
-        Consumer consumer = new Consumer(buffer);
+        Producer producer = new Producer(buffer, iterations);
+        Consumer consumer = new Consumer(buffer, iterations);
 
         //Create a thread for both the producer and consumer; 1 of each
         Thread prodThread = new Thread(producer);

@@ -3,10 +3,12 @@ package HW4;
 public class Consumer implements Runnable {
 
     private Buffer buffer;
+    private int iterations;
 
     //Import buffer item
-    public Consumer(Buffer buffer) {
+    public Consumer(Buffer buffer, int iterations) {
         this.buffer = buffer;
+        this.iterations = iterations;
     }
 
     //Loop to remove 1,000,000 items from the buffer
@@ -14,7 +16,7 @@ public class Consumer implements Runnable {
     @Override
     public void run() {
         double total = 0d;
-        for (int i = 0; i < 1000000; i++) {
+        for (int i = 0; i < iterations; i++) {
             try {
                 double bufferElement = buffer.consume();
                 total += bufferElement;

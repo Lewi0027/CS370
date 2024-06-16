@@ -4,6 +4,6 @@ all:
 run:
 	java -cp .. HW4.Main
 clean:
-	rm -f ../HW4/*.class
+	rm -f ../HW4/*.class ../HW4/*.zip
 package:
 	zip -r Henry-Lewis-HW4.zip $(FILES) Makefile README.txt

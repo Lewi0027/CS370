@@ -6,11 +6,13 @@ public class Producer implements Runnable {
     
     private Buffer buffer;
     private Random random;
+    private int iterations;
 
     //Import buffer item and create Random item for generating doubles
-    public Producer(Buffer buffer) {
+    public Producer(Buffer buffer, int iterations) {
         this.buffer = buffer;
         this.random = new Random();
+        this.iterations = iterations;
     }
     
     //Loop to create 1,000,000 items and add them to the buffer
@@ -18,7 +20,7 @@ public class Producer implements Runnable {
     @Override
     public void run() {
         double total = 0d;
-        for (int i = 0; i < 1000000; i++) {
+        for (int i = 0; i < iterations; i++) {
             double bufferElement = random.nextDouble() * 100.0;
             
             try {
