@@ -43,6 +43,6 @@ $(C_OBJS): ${C_HEADERS}
 
 #clean up directory 
 clean: 
-	rm -f *.o *- $(EXE1) $(EXE2)
+	rm -f *.o *- $(EXE1) $(EXE2) *.zip
 package: 
 	zip -r Henry-Lewis-HW3.zip coordinator.c coordinator.h checker.c Makefile README.txt

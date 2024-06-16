@@ -16,7 +16,7 @@ public class Consumer implements Runnable {
     @Override
     public void run() {
         double total = 0d;
-        for (int i = 0; i < iterations; i++) {
+        for (int i = 1; i < iterations+1; i++) {
             try {
                 double bufferElement = buffer.consume();
                 total += bufferElement;
