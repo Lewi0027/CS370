@@ -1,0 +1,1 @@
+Demonstrating a synchronized block inside of a worker function.
