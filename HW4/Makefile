@@ -1,4 +1,4 @@
-FILES = Main.java Worker.java
+FILES = Main.java Buffer.java Consumer.java Producer.java
 all:
 	javac -d .. ./$(FILES)
 run:
