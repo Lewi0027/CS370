@@ -1,6 +1,4 @@
-package HW4;
-
-public class Main {
+public class ProducerConsumer {
     
     public static final int iterations = 1000000;
     public static void main(String[] args) {
@@ -22,9 +20,11 @@ public class Main {
         try {
             prodThread.join();
             consThread.join();
+            System.out.println("Producer: Finished generating 1,000,000 items");
+            System.out.println("Consumer: Finished consuming 1,000,000 items");
         } catch (InterruptedException e) {
-            System.out.println("ERROR IN MAIN.\n");
+            System.out.println("ERROR IN MAIN.");
         }
-        System.out.println("Exiting!\n");
+        System.out.println("Exiting!");
     }
 }

@@ -1,9 +1,9 @@
-FILES = Main.java Buffer.java Consumer.java Producer.java
+FILES = ProducerConsumer.java Buffer.java Consumer.java Producer.java
 all:
-	javac -d .. ./$(FILES)
+	javac -g $(FILES)
 run:
-	java -cp .. HW4.Main
+	java ProducerConsumer
 clean:
-	rm -f ../HW4/*.class ../HW4/*.zip
+	rm -f ./*.class ./*.zip
 package:
 	zip -r Henry-Lewis-HW4.zip $(FILES) Makefile README.txt

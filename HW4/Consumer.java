@@ -1,5 +1,3 @@
-package HW4;
-
 public class Consumer implements Runnable {
 
     private Buffer buffer;
@@ -16,19 +14,22 @@ public class Consumer implements Runnable {
     @Override
     public void run() {
         double total = 0d;
-        for (int i = 1; i < iterations+1; i++) {
+        for (int i = 0; i < iterations; i++) {
             try {
                 double bufferElement = buffer.consume();
                 total += bufferElement;
             } catch (InterruptedException e) {
-                System.out.println("ERROR in CONSUMER.\n");
+                System.out.println("ERROR in CONSUMER.");
             }
 
             if (i % 100000 == 0 && i != 0) {
                 System.out.println("Consumer: Consumed " + i/1000 + ",000 items, Cumulative value of consumed items=" + formatDouble(total));
             }
+            if (i == iterations - 1) {
+                System.out.println("Consumer: Consumed 1,000,000 items, Cumulative value of consumed items=" + formatDouble(total));
+            }
         }
-        System.out.println("Consumer: Finished consuming 1,000,000 items");
+        // System.out.println("Consumer: Finished consuming 1,000,000 items");
     }
 
     private String formatDouble(double value) {
