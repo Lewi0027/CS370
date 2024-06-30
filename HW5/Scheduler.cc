@@ -165,9 +165,6 @@ void SJFP(vector<Process> processes) {
     //Prio Qs to hold processes while they havent started and when they are waiting to run
     priority_queue<Process, vector<Process>, compareArrivalTime> arrivalQueue;
     priority_queue<Process, vector<Process>, compareBurstDuration> waitingQueue;
-    
-    //sort by arrival time
-    sort(processesTemp.begin(), processesTemp.end(), byArrivalTime);
 
     //push vector elements to queue sorted by arrival time
     for (auto& process : processes) {
@@ -232,9 +229,6 @@ void Priority(vector<Process> processes) {
     //Prio Qs to hold processes while they havent started and when they are waiting to run
     priority_queue<Process, vector<Process>, compareArrivalTime> arrivalQueue;
     priority_queue<Process, vector<Process>, comparePriority> waitingQueue;
-    
-    //sort by arrival time
-    sort(processesTemp.begin(), processesTemp.end(), byArrivalTime);
 
     //push vector elements to queue sorted by arrival time
     for (auto& process : processes) {
