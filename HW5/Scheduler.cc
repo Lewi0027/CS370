@@ -14,8 +14,6 @@ struct Process {
     int burstDuration; //Column 2
     int burstModified;
     int priority; //Column 3
-    int waitingDuration = 0;
-    int turnaroundDuration = 0;
 };
 
 //Function that reads provided CSV file and converts it into a vector
@@ -313,29 +311,4 @@ int main (int argc, char* argv[]) {
     Priority(processes);
 
     return 0;
-}
-
-
-void output3(priority_queue<Process, vector<Process>, compareArrivalTime>& queue) {
-    priority_queue<Process, vector<Process>, compareArrivalTime> tempQueue = queue; 
-
-    while (!tempQueue.empty()) {
-        cout << "AQ: ProcessID: " << tempQueue.top().processID << ", ";
-        cout << "AQ: Arrival Time: " << tempQueue.top().arrivalTime << ", ";
-        cout << "AQ: Burst Duration: " << tempQueue.top().burstDuration << ", ";
-        cout << "AQ: Priority: " << tempQueue.top().priority << endl;
-        tempQueue.pop();
-    }
-}
-
-void output4(priority_queue<Process, vector<Process>, compareBurstDuration>& queue) {
-    priority_queue<Process, vector<Process>, compareBurstDuration> tempQueue = queue; 
-
-    while (!tempQueue.empty()) {
-        cout << "WQ: ProcessID: " << tempQueue.top().processID << ", ";
-        cout << "WQ: Arrival Time: " << tempQueue.top().arrivalTime << ", ";
-        cout << "WQ: Burst Duration: " << tempQueue.top().burstDuration << ", ";
-        cout << "WQ: Priority: " << tempQueue.top().priority << endl;
-        tempQueue.pop();
-    }
 }
