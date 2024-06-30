@@ -109,7 +109,7 @@ struct compareArrivalTime{
     }
 };
 
-//Comparator for priority queue
+//Comparator for SJFP queue
 struct compareBurstDuration{
     bool operator()(const Process& a, Process& b) {
         if (a.burstDuration == b.burstDuration) {
@@ -120,29 +120,16 @@ struct compareBurstDuration{
     }
 };
 
-void output3(priority_queue<Process, vector<Process>, compareArrivalTime>& queue) {
-    priority_queue<Process, vector<Process>, compareArrivalTime> tempQueue = queue; 
-
-    while (!tempQueue.empty()) {
-        cout << "AQ: ProcessID: " << tempQueue.top().processID << ", ";
-        cout << "AQ: Arrival Time: " << tempQueue.top().arrivalTime << ", ";
-        cout << "AQ: Burst Duration: " << tempQueue.top().burstDuration << ", ";
-        cout << "AQ: Priority: " << tempQueue.top().priority << endl;
-        tempQueue.pop();
+//Comparator for priority queue
+struct comparePriority{
+    bool operator()(const Process& a, Process& b) {
+        if (a.priority == b.priority) {
+            return a.processID > b.processID;
+        }
+    
+        return a.priority > b.priority;
     }
-}
-
-void output4(priority_queue<Process, vector<Process>, compareBurstDuration>& queue) {
-    priority_queue<Process, vector<Process>, compareBurstDuration> tempQueue = queue; 
-
-    while (!tempQueue.empty()) {
-        cout << "WQ: ProcessID: " << tempQueue.top().processID << ", ";
-        cout << "WQ: Arrival Time: " << tempQueue.top().arrivalTime << ", ";
-        cout << "WQ: Burst Duration: " << tempQueue.top().burstDuration << ", ";
-        cout << "WQ: Priority: " << tempQueue.top().priority << endl;
-        tempQueue.pop();
-    }
-}
+};
 
 //First Come First Serve Scheduling Algorithm
 //Return nothing, output findings within process
@@ -182,17 +169,22 @@ void SJFP(vector<Process> processes) {
     int totalTime = 0;
     int turnaroundTime = 0;
     vector<Process> processesTemp = processes;
+
+    //Prio Qs to hold processes while they havent started and when they are waiting to run
     priority_queue<Process, vector<Process>, compareArrivalTime> arrivalQueue;
     priority_queue<Process, vector<Process>, compareBurstDuration> waitingQueue;
     
     //sort by arrival time
     sort(processesTemp.begin(), processesTemp.end(), byArrivalTime);
 
+    //push vector elements to queue sorted by arrival time
     for (auto& process : processes) {
         arrivalQueue.push(process);
     }
 
+    //loop for as long as computations are being made
     while (totalTime < totalBurst(processesTemp)) {
+        //if Arrival Q is not empty then add top element to waiting Q if totalTime = arrivalTime. Repeat for multiple elements if necessary
         if (!arrivalQueue.empty()) {
             Process nextProcess = arrivalQueue.top();
             
@@ -208,6 +200,8 @@ void SJFP(vector<Process> processes) {
             }
         }
 
+        //remove 1 burst from the item with the least burst left in waiting queue. 
+        //if no bursts left calculate waiting time and add to total
         if(!waitingQueue.empty()) {
             Process removeBurst = waitingQueue.top();
 
@@ -235,9 +229,70 @@ void SJFP(vector<Process> processes) {
     output(avgTurnaroundTime, avgWaitingTime, throughput);
 }
 
-// void Priority(vector<Process> processes) {
+void Priority(vector<Process> processes) {
+    int waitingTime = 0;
+    int totalTime = 0;
+    int turnaroundTime = 0;
+    vector<Process> processesTemp = processes;
 
-// }
+    //Prio Qs to hold processes while they havent started and when they are waiting to run
+    priority_queue<Process, vector<Process>, compareArrivalTime> arrivalQueue;
+    priority_queue<Process, vector<Process>, comparePriority> waitingQueue;
+    
+    //sort by arrival time
+    sort(processesTemp.begin(), processesTemp.end(), byArrivalTime);
+
+    //push vector elements to queue sorted by arrival time
+    for (auto& process : processes) {
+        arrivalQueue.push(process);
+    }
+
+    //loop for as long as computations are being made
+    while (totalTime < totalBurst(processesTemp)) {
+        //if Arrival Q is not empty then add top element to waiting Q if totalTime = arrivalTime. Repeat for multiple elements if necessary
+        if (!arrivalQueue.empty()) {
+            Process nextProcess = arrivalQueue.top();
+            
+            if (nextProcess.arrivalTime == totalTime) {
+                arrivalQueue.pop();
+                waitingQueue.push(nextProcess);
+
+                while (!arrivalQueue.empty() && arrivalQueue.top().arrivalTime == totalTime) {
+                    nextProcess = arrivalQueue.top();
+                    arrivalQueue.pop();
+                    waitingQueue.push(nextProcess);
+                }
+            }
+        }
+
+        //remove 1 burst from the item with the highest priority left in waiting queue. 
+        //if no bursts left calculate waiting time and add to total
+        if(!waitingQueue.empty()) {
+            Process removeBurst = waitingQueue.top();
+
+            removeBurst.burstModified -= 1;
+            waitingQueue.pop();
+            if (removeBurst.burstModified != 0) {
+                waitingQueue.push(removeBurst);
+            }
+            else {
+                waitingTime += totalTime - removeBurst.arrivalTime - removeBurst.burstDuration + 1;
+            }
+
+        }
+        totalTime++;
+    }
+    turnaroundTime = waitingTime + totalTime;
+    //calculate average waiting time
+    double avgWaitingTime = static_cast<double> (waitingTime) / processesTemp.size();
+    //calculate throughput
+    double throughput = processesTemp.size() / static_cast<double> (totalBurst(processesTemp));
+    //calculate average turnaround time
+    double avgTurnaroundTime = static_cast<double> (turnaroundTime) / processesTemp.size();
+
+    //create output for FCFS algorithm
+    output(avgTurnaroundTime, avgWaitingTime, throughput);
+}
 
 int main (int argc, char* argv[]) {
     if (argc != 2) {
@@ -248,21 +303,43 @@ int main (int argc, char* argv[]) {
     //Create vector with all the different processes included
     vector<Process> processes = fileToVector(argv[1]);
 
-
     //Run all three scheduling algorithms
     //FCFS Scheduling algo:
-    cout << "--- FCFS --- " << endl;
+    cout << "--- FCFS ---" << endl;
     FCFS(processes);
 
     //SJFP Scheduling algo:
-    cout << "--- SJFP --- " << endl;
+    cout << "--- SJFP ---" << endl;
     SJFP(processes);
 
-    // //Priority Scheduling algo:
-    // cout << "--- Prioirity --- " << endl;
-    // Priority(processes);
-
-    //output2(processes);
+    //Priority Scheduling algo:
+    cout << "--- Priority ---" << endl;
+    Priority(processes);
 
     return 0;
+}
+
+
+void output3(priority_queue<Process, vector<Process>, compareArrivalTime>& queue) {
+    priority_queue<Process, vector<Process>, compareArrivalTime> tempQueue = queue; 
+
+    while (!tempQueue.empty()) {
+        cout << "AQ: ProcessID: " << tempQueue.top().processID << ", ";
+        cout << "AQ: Arrival Time: " << tempQueue.top().arrivalTime << ", ";
+        cout << "AQ: Burst Duration: " << tempQueue.top().burstDuration << ", ";
+        cout << "AQ: Priority: " << tempQueue.top().priority << endl;
+        tempQueue.pop();
+    }
+}
+
+void output4(priority_queue<Process, vector<Process>, compareBurstDuration>& queue) {
+    priority_queue<Process, vector<Process>, compareBurstDuration> tempQueue = queue; 
+
+    while (!tempQueue.empty()) {
+        cout << "WQ: ProcessID: " << tempQueue.top().processID << ", ";
+        cout << "WQ: Arrival Time: " << tempQueue.top().arrivalTime << ", ";
+        cout << "WQ: Burst Duration: " << tempQueue.top().burstDuration << ", ";
+        cout << "WQ: Priority: " << tempQueue.top().priority << endl;
+        tempQueue.pop();
+    }
 }

@@ -5,10 +5,10 @@
 CXX=g++
 CXXFLAGS=-Wall -Wextra -Wpedantic -Werror -Wfatal-errors -Winit-self -Wshadow -Wlogical-op -Wcomment -Wctor-dtor-privacy -Wold-style-cast -D_GLIBCXX_DEBUG -fno-diagnostics-show-option
 
-all: Scheduler.cpp
-	$(CXX) $(CXXFLAGS) -o Scheduler Scheduler.cpp
+all: Scheduler.cc
+	$(CXX) $(CXXFLAGS) -o Scheduler Scheduler.cc
 
 clean:
 	rm -f Scheduler *.o *.zip
 package:
-	zip Lewis-Henry-HW5.zip README.txt Makefile Scheduler.cpp
+	zip Lewis-Henry-HW5.zip README.txt Makefile Scheduler.cc
