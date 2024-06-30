@@ -63,15 +63,7 @@ void output(double TT, double WT, double TP) {
     cout << "Throughput: " << fixed << setprecision(3) << TP << endl;
 }
 
-void output2(vector<Process> processes) {
-    for (const auto& process : processes) {
-        cout << "ProcessID: " << process.processID << ", ";
-        cout << "Arrival Time: " << process.arrivalTime << ", ";
-        cout << "Burst Duration: " << process.burstDuration << ", ";
-        cout << "Priority: " << process.priority << endl;
-    }
-}
-
+//Calculate total time to run all processes
 int totalBurst(vector<Process> processes) {
     int totalTime = 0;
     for (const auto& process: processes) {
@@ -164,6 +156,8 @@ void FCFS(vector<Process> processes) {
     output(avgTurnaroundTime, avgWaitingTime, throughput);
 }
 
+//Shortest Job First
+//Pre-emptive.
 void SJFP(vector<Process> processes) {
     int waitingTime = 0;
     int totalTime = 0;
@@ -229,6 +223,8 @@ void SJFP(vector<Process> processes) {
     output(avgTurnaroundTime, avgWaitingTime, throughput);
 }
 
+//Priority
+//Pre-emptive.
 void Priority(vector<Process> processes) {
     int waitingTime = 0;
     int totalTime = 0;
