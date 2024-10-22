@@ -1,6 +1,29 @@
-This program takes a CSV and reads it into a vector of structs.
+# Process Scheduling Program
 
-From there it will sort them by arrival time and then calculate average waiting time, average turnaround time and throughput using three different algorithms.
-1. FCFS
-2. SJFP
-3. Priority
+This program implements three scheduling algorithms to calculate the following metrics:
+- **Average Waiting Time**
+- **Average Turnaround Time**
+- **Throughput**
+
+### Scheduling Algorithms:
+1. **FCFS (First Come First Serve)**
+2. **SJFP (Shortest Job First Preemptive)**
+3. **Priority Scheduling (Preemptive)**
+
+## Input Format
+The input is a CSV file containing:
+- **Process ID**, **Arrival Time**, **Burst Duration**, **Priority**
+
+## How to Run
+1. Compile the program with the Makefile.
+
+## Output
+The program will output the calculated metrics for each scheduling algorithm:
+- Average Waiting Time
+- Average Turnaround Time
+- Throughput
+
+## Code Structure
+- **Process Struct:** Stores process data (ID, Arrival Time, Burst, etc.).
+- **Algorithms:** Implements the scheduling algorithms.
+- **Helper Functions:** Manages input, output, and calculations.
